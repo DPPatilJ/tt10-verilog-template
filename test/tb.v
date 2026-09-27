@@ -36,11 +36,11 @@ module tb ();
       .VGND(VGND),
 `endif
 
-      .ui_in  (ui_in),    // Dedicated inputs
-      .uo_out (uo_out),   // Dedicated outputs
-      .uio_in (uio_in),   // IOs: Input path
-      .uio_out(uio_out),  // IOs: Output path
-      .uio_oe (uio_oe),   // IOs: Enable path (active high: 0=input, 1=output)
+     .clock(clck),    // Dedicated inputs
+     .reset(rst_n),   // Dedicated outputs
+     .heartbeat(ui_in_0)@0,   // IOs: Input path
+     .bpm(uo_out),  // IOs: Output path
+     .ui_oe(ui_oe),   // IOs: Enable path (active high: 0=input, 1=output)
       .ena    (ena),      // enable - goes high when design is selected
       .clk    (clk),      // clock
       .rst_n  (rst_n)     // not reset
