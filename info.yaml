@@ -23,9 +23,9 @@ project:
 # This section is for the datasheet/website. Use descriptive names (e.g., RX, TX, MOSI, SCL, SEG_A, etc.).
 pinout:
   # Inputs
-  ui[0]: ""
-  ui[1]: ""
-  ui[2]: ""
+  ui[0]: "clck"
+  ui[1]: "rst"
+  ui[2]: "heartbeat"
   ui[3]: ""
   ui[4]: ""
   ui[5]: ""
@@ -33,14 +33,14 @@ pinout:
   ui[7]: ""
 
   # Outputs
-  uo[0]: ""
-  uo[1]: ""
-  uo[2]: ""
-  uo[3]: ""
-  uo[4]: ""
-  uo[5]: ""
-  uo[6]: ""
-  uo[7]: ""
+  uo[0]: "status0"
+  uo[1]: "status1"
+  uo[2]: "bpm2"
+  uo[3]: "bpm3"
+  uo[4]: "bpm4"
+  uo[5]: "bpm5"
+  uo[6]: "bpm6"
+  uo[7]: "bpm7"
 
   # Bidirectional pins
   uio[0]: ""
