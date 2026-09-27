@@ -1,27 +1,69 @@
-/*
- * Copyright (c) 2024 Your Name
- * SPDX-License-Identifier: Apache-2.0
- */
+`timescale 1ns/1ps
 
-`default_nettype none
+module heart_rate_monitor #(
+    parameter integer CLOCK_FREQ_HZ = 1000
+)(
+    input  wire       clk,
+    input  wire       reset,
+    input  wire       heartbeat,
 
-module tt_um_example (
-    input  wire [7:0] ui_in,    // Dedicated inputs
-    output wire [7:0] uo_out,   // Dedicated outputs
-    input  wire [7:0] uio_in,   // IOs: Input path
-    output wire [7:0] uio_out,  // IOs: Output path
-    output wire [7:0] uio_oe,   // IOs: Enable path (active high: 0=input, 1=output)
-    input  wire       ena,      // always 1 when the design is powered, so you can ignore it
-    input  wire       clk,      // clock
-    input  wire       rst_n     // reset_n - low to reset
+    output reg [7:0]  bpm,
+    output reg [1:0]  status
 );
 
-  // All output pins must be assigned. If not used, assign to 0.
-  assign uo_out  = ui_in + uio_in;  // Example: ou_out is the sum of ui_in and uio_in
-  assign uio_out = 0;
-  assign uio_oe  = 0;
+    reg heartbeat_d;
 
-  // List all unused inputs to prevent warnings
-  wire _unused = &{ena, clk, rst_n, 1'b0};
+    reg [31:0] clock_counter;
+    reg [31:0] last_beat_time;
+
+    reg        first_beat;
+
+    reg [63:0] interval;
+
+    wire heartbeat_rising = heartbeat & ~heartbeat_d;
+
+    wire [31:0] beat_interval = clock_counter - last_beat_time;
+    wire [63:0] bpm_calc      = (beat_interval == 32'd0) ? 64'd0 :
+                                 (64'd60 * CLOCK_FREQ_HZ) / beat_interval;
+
+    always @(posedge clk) begin
+
+        if (reset) begin
+            heartbeat_d    <= 1'b0;
+            clock_counter  <= 32'd0;
+            last_beat_time <= 32'd0;
+            first_beat     <= 1'b1;
+            bpm            <= 8'd0;
+            status         <= 2'b00;
+            interval       <= 64'd0;
+        end
+        else begin
+
+            heartbeat_d   <= heartbeat;
+            clock_counter <= clock_counter + 1'b1;
+
+            if (heartbeat_rising) begin
+
+                if (first_beat) begin
+                    first_beat     <= 1'b0;
+                    last_beat_time <= clock_counter;
+                    status         <= 2'b01;   // Measuring
+                end
+                else begin
+                    last_beat_time <= clock_counter;
+                    interval       <= beat_interval;
+
+                    if (bpm_calc >= 64'd30 && bpm_calc <= 64'd200) begin
+                        bpm    <= bpm_calc[7:0];
+                        status <= 2'b10; // Valid
+                    end
+                    else begin
+                        bpm    <= 8'd0;
+                        status <= 2'b11; // Invalid
+                    end
+                end
+            end
+        end
+    end
 
 endmodule
