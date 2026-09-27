@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module heart_rate_monitor #(
+module tt_um_Digambar_Heartrate #(
     parameter integer CLOCK_FREQ_HZ = 1000
 )(
     input  wire       clk,
