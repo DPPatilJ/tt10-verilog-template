@@ -6,7 +6,7 @@ module tt_um_Digambar_Heartrate #(
     input  wire       clk,
     input  wire       reset,
     input  wire       heartbeat,
-
+    input  wire       ena ,
     output reg [7:0]  bpm,
     output reg [1:0]  status
 );
